@@ -15,6 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "deploy": "npm run build && scp -r ./build/* zeldor@51.250.104.86:/home/zeldor/mesto-frontend",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
