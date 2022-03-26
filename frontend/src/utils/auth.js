@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://auth.nomoreparties.co';
+export const BASE_URL = 'https://api.mesto-react.nomoredomains.work';
 
 export function register(password, email) {
   return fetch(`${BASE_URL}/signup`, {
@@ -7,7 +7,7 @@ export function register(password, email) {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({password, email})
+    body: JSON.stringify({password, email}),
   })
   .then((response) => {
     try {
@@ -31,7 +31,7 @@ export function authorize(email, password) {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({email, password})
+    body: JSON.stringify({email, password}),
   })
   .then((response => response.json()))
   .then((data) => {
@@ -49,9 +49,10 @@ export function getContent(token) {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    }
+      'Authorization': token,
+    },
   })
   .then(res => res.json())
   .then(data => data)
+  .catch((err) => console.log(err));
 } 

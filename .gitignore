@@ -26,8 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 
 
-
-
 # BACKEND
 
 # Logs
@@ -45,3 +43,4 @@ node_modules
 .DS_Store
 .idea
 .vscode
+.env

@@ -68,8 +68,7 @@ function App() {
   }
 
   function handleUpdateUser(newUser) {
-    api
-      .editUserInfo(newUser.name, newUser.about)
+    api.editUserInfo(newUser.name, newUser.about)
       .then((user) => {
         setCurrentUser(user);
         closeAllPopups();
@@ -80,8 +79,7 @@ function App() {
   }
 
   function handleUpdateAvatar(newAvatarUrl) {
-    api
-      .changeAvatar(newAvatarUrl.avatar)
+    api.changeAvatar(newAvatarUrl.avatar)
       .then((user) => {
         setCurrentUser(user);
         closeAllPopups();
@@ -95,24 +93,24 @@ function App() {
 
   useEffect(() => {
     checkToken();
-    api
-      .getAllNeededData()
-      .then(([cards, user]) => {
-        setCurrentUser(user);
-        setCards(cards);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    if (localStorage.getItem("token")) {
+      api.getAllNeededData()
+        .then(([cards, user]) => {
+          setCurrentUser(user);
+          setCards(cards.reverse());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [currentEmail]);
 
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i === currentUser._id);
 
     // Отправляем запрос в API и получаем обновлённые данные карточки
-    api
-      .changeLikeCardStatus(card._id, !isLiked)
+    api.changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
         setCards((state) =>
           state.map((c) => (c._id === card._id ? newCard : c))
@@ -124,8 +122,7 @@ function App() {
   }
 
   function handleCardDelete(id) {
-    api
-      .deleteCard(id)
+    api.deleteCard(id)
       .then(() => {
         setCards(cards.filter((card) => card._id !== id));
       })
@@ -135,8 +132,7 @@ function App() {
   }
 
   function handleAddPlaceSubmit(card) {
-    api
-      .postCard(card.name, card.link)
+    api.postCard(card.name, card.link)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
@@ -147,11 +143,10 @@ function App() {
   }
 
   function handleLogin(token) {
-    auth
-      .getContent(token)
+    auth.getContent(token)
       .then((res) => {
         if (res) {
-          setCurrentEmail(res.data.email);
+          setCurrentEmail(res.email);
           // авторизуем пользователя
           setLoggedIn(true);
           history.push("/");
@@ -180,8 +175,7 @@ function App() {
 
   function handleRegisterUser(newUser) {
     setIsLoading(true);
-    auth
-      .register(newUser.password, newUser.email)
+    auth.register(newUser.password, newUser.email)
       .then((res) => {
         if (res) {
           handleInfoTooltipPopupOpen("success");
@@ -200,12 +194,10 @@ function App() {
 
   function handleLoginUser(user) {
     setIsLoading(true);
-    auth
-      .authorize(user.email, user.password)
+    auth.authorize(user.email, user.password)
       .then((data) => {
         if (data.token) {
           handleLogin(data.token);
-          history.push("/");
         }
       })
       .catch(() => {
